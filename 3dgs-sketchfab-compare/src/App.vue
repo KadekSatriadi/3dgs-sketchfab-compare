@@ -1,10 +1,17 @@
-<script setup>
+<script setup lang="ts">
 import SketchfabViewer from './components/SketchfabViewer.vue';
 import GaussianViewer from './components/GaussianViewer.vue';
 import { ref } from 'vue';
 
-const viewerRef = ref(null);
-const gaussianViewerRef = ref(null);
+interface ViewerAPI {
+  nextAnnotation: () => void;
+  previousAnnotation: () => void;
+  gotoAnnotation: (index: number) => void;
+  getAnnotationList: (callback: (err: any, annotations: any[]) => void) => void;
+}
+
+const viewerRef = ref<ViewerAPI | null>(null);
+const gaussianViewerRef = ref<{ nextView: () => void; previousView: () => void } | null>(null);
 
 const cameraViews = [
   {
@@ -25,12 +32,12 @@ const cameraViews = [
 ]
 
   const next = () => {
-    gaussianViewerRef?.value.nextView();
-    viewerRef?.value.previousAnnotation()
+    gaussianViewerRef?.value?.nextView();
+    viewerRef?.value?.previousAnnotation()
   };
   const previous = () => {
-    gaussianViewerRef?.value.previousView();
-    viewerRef?.value.nextAnnotation()
+    gaussianViewerRef?.value?.previousView();
+    viewerRef?.value?.nextAnnotation()
   };
 
 </script>

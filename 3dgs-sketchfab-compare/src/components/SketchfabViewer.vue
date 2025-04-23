@@ -27,8 +27,45 @@
     </div>
   </template>
   
-  <script setup>
+  <script setup lang="ts">
+  import { defineProps, defineExpose } from 'vue';
   import { ref, computed, onMounted } from 'vue';
+  
+  interface SketchfabAPI {
+    addEventListener: (event: string, callback: () => void) => void;
+    getAnnotationList: (callback: (err: any, annotations: any[]) => void) => void;
+    gotoAnnotation: (index: number) => void;
+    start: () => void;
+    stop: () => void;
+    play: () => void;
+    pause: () => void;
+  }
+  
+  interface Annotation {
+    title: string;
+    description: string;
+    index: number;
+    name: string;
+  }
+  
+  interface SketchfabInitOptions {
+    success: (api: SketchfabAPI) => void;
+    error?: () => void;
+    autostart?: boolean;
+    preload?: boolean;
+  }
+  
+  interface SketchfabClient {
+    init: (modelId: string, options: SketchfabInitOptions) => void;
+  }
+  
+  declare global {
+    interface Window {
+      Sketchfab: {
+        new (iframe: HTMLIFrameElement): SketchfabClient;
+      };
+    }
+  }
   
   const props = defineProps({
     modelId: {
@@ -61,21 +98,21 @@
     }
   });
   
-  const viewerIframe = ref(null);
-  const api = ref(null);
-  const annotations = ref([]);
+  const viewerIframe = ref<HTMLIFrameElement | null>(null);
+  const api = ref<SketchfabAPI | null>(null);
+  const annotations = ref<Annotation[]>([]);
   
   const embedUrl = computed(() => {
     const baseUrl = 'https://sketchfab.com/models/';
     const params = new URLSearchParams({
-      autostart: props.autostart ? 1 : 0,
-      ui_controls: 1,
-      ui_infos: 1,
-      ui_inspector: 1,
-      ui_stop: 1,
-      ui_watermark: 1,
-      ui_help: 0,
-      annotations_visible: 1
+      autostart: props.autostart ? '1' : '0',
+      ui_controls: '1',
+      ui_infos: '1',
+      ui_inspector: '1',
+      ui_stop: '1',
+      ui_watermark: '1',
+      ui_help: '0',
+      annotations_visible: '1'
     });
     return `${baseUrl}${props.modelId}/embed?${params.toString()}`;
   });
@@ -89,15 +126,16 @@
       const client = new window.Sketchfab(iframe);
   
       client.init(props.modelId, {
-        success: (apiClient) => {
+        success: (apiClient: SketchfabAPI) => {
           api.value = apiClient;
           
           // Wait for viewer to be ready before accessing annotations
-          api.value.addEventListener('viewerready', () => {
+          
+          api?.value?.addEventListener('viewerready', () => {
             console.log('Viewer is ready');
             
             // Get annotations once the viewer is ready
-            api.value.getAnnotationList((err, annotationsList) => {
+            api?.value?.getAnnotationList((err, annotationsList) => {
               if (!err) {
                 annotations.value = annotationsList;
                 currentAnnotationIndex.value = 0;
@@ -151,7 +189,7 @@
     }
   };
   
-  const goToAnnotation = (index) => {
+  const goToAnnotation = (index: any | never) => {
     if (!api.value || !annotations.value[index]) return;
     
     currentAnnotationIndex.value = index;
