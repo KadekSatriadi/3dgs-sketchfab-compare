@@ -42,6 +42,7 @@
 //     width: props.width || '100%',
 //     height: props.height || '400px'
 //   }))
+
   
   const setCameraView = (view: CameraView) => {
     if (!camera) return
@@ -100,7 +101,8 @@
   defineExpose({
     nextView,
     previousView,
-    setCameraView
+    setCameraView,
+    setFOV
   })
 
 
@@ -127,6 +129,7 @@
   
     scene = new SPLAT.Scene()
     camera = new SPLAT.Camera()
+    
    // setFOV(camera, 10) // Set FOV to 45 degrees
 
     // Set initial position and rotation
