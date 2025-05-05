@@ -102,19 +102,42 @@
     previousView,
     setCameraView
   })
+
+
+
+  function setFOV(camera: SPLAT.Camera, fovDegrees: number): void {
+    
+    // Convert FOV in degrees to radians
+    const fovRadians = fovDegrees * (Math.PI / 180);
+    
+    // Calculate focal length from FOV
+    camera.data.setSize(1044, 1044); // Set the size of the camera
+    camera.update(); // Update the projection matrix
+    // For a perspective projection, focal length = (width/2) / tan(FOV/2)
+    const fx = (camera.data.width / 2) / Math.tan(fovRadians / 2);
+    
+    // Set the focal lengths
+    camera.data.fx = fx;
+    camera.data.fy = fx;
+    camera.update();
+  }
   
   const initViewer = async () => {
     if (!containerRef.value) return
   
     scene = new SPLAT.Scene()
     camera = new SPLAT.Camera()
-    
+   // setFOV(camera, 10) // Set FOV to 45 degrees
+
     // Set initial position and rotation
     camera.position = new SPLAT.Vector3(0, 0, 5)
     camera.rotation = new SPLAT.Quaternion(0, 0, 0, 1) // Identity quaternion
     
     renderer = new SPLAT.WebGLRenderer()
-    
+
+    console.log('Camera:', camera)
+    console.log('Renderer:', renderer)
+    console.log('Scene:', scene)
     // Always create orbit controls for smooth transitions, 
     // but disable interaction if cameraControls is false
     controls = new SPLAT.OrbitControls(camera, renderer.canvas)
@@ -133,8 +156,10 @@
   
     try {
       // Load the splat file
-      await SPLAT.Loader.LoadAsync(props.modelUrl, scene, () => {})
-  
+      const splat = await SPLAT.Loader.LoadAsync(props.modelUrl, scene, () => {})
+      console.log('Splat loaded:', splat)
+      //splat.scale = new SPLAT.Vector3(10, 10, 10) // Scale the model to 100x its original size
+      //splat.applyScale() // Scale the model to 100x its original size
       // Set initial camera view if available
       if (props.cameraViews?.length) {
         setCameraView(props.cameraViews[0])
