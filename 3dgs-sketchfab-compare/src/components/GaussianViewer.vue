@@ -11,7 +11,7 @@
   </template>
   
   <script setup lang="ts">
-  import { ref, onMounted, onUnmounted } from 'vue'
+  import { ref, onMounted, onUnmounted , emits} from 'vue'
   import * as SPLAT from 'gsplat'
   
   interface CameraView {
@@ -37,6 +37,8 @@
   let renderer: SPLAT.WebGLRenderer
   let controls: SPLAT.OrbitControls
   let animationFrameId: number
+
+  const emit = defineEmits(['frame'])
   
 //   const containerStyle = computed(() => ({
 //     width: props.width || '100%',
@@ -48,14 +50,14 @@
     if (!camera) return
   
     // Update camera position using Vector3
-    camera.position = new SPLAT.Vector3(view.position.x, view.position.y, view.position.z)
+    camera.position = new SPLAT.Vector3(view.position[0], view.position[1], view.position[2])
   
     // Set camera rotation directly using quaternion
     camera.rotation = new SPLAT.Quaternion(
-      view.rotation.x,
-      view.rotation.y,
-      view.rotation.z,
-      view.rotation.w
+      view.rotation[0],
+      view.rotation[1],
+      view.rotation[2],
+      view.rotation[3]
     )
   
     // Update controls if they exist
@@ -128,8 +130,12 @@
     if (!containerRef.value) return
   
     scene = new SPLAT.Scene()
-    camera = new SPLAT.Camera()
     
+    const data = new SPLAT.CameraData()
+    data.setSize(props.width,props.height)
+    data.far = 1000000;
+    camera = new SPLAT.Camera(data)
+
    // setFOV(camera, 10) // Set FOV to 45 degrees
 
     // Set initial position and rotation
@@ -138,35 +144,36 @@
     
     renderer = new SPLAT.WebGLRenderer()
 
-    console.log('Camera:', camera)
+    console.log('Data:', camera.data)
     console.log('Renderer:', renderer)
     console.log('Scene:', scene)
     // Always create orbit controls for smooth transitions, 
     // but disable interaction if cameraControls is false
     controls = new SPLAT.OrbitControls(camera, renderer.canvas)
-    
+    controls.maxZoom = 1000;
+    controls.minZoom = 0.00000001;
+    console.log('Controls', controls);
     // Disable user interaction if cameraControls is false
     // if (props.cameraControls === false) {
     //   controls.enabled = false
     // }
   
     // Set canvas size
-    renderer.canvas.style.width = props.width || '100%'
-    renderer.canvas.style.height = props.height || '400px'
+    renderer.canvas.style.width = props.width + 'px'
+    renderer.canvas.style.height = props.height + 'px'
   
     // Add canvas to container
     containerRef.value.appendChild(renderer.canvas)
   
+    renderer.setSize( props.width,props.height)
     try {
       // Load the splat file
       const splat = await SPLAT.Loader.LoadAsync(props.modelUrl, scene, () => {})
       console.log('Splat loaded:', splat)
-      //splat.scale = new SPLAT.Vector3(10, 10, 10) // Scale the model to 100x its original size
-      //splat.applyScale() // Scale the model to 100x its original size
-      // Set initial camera view if available
-      if (props.cameraViews?.length) {
-        setCameraView(props.cameraViews[0])
-      }
+      const scale = 5;
+      splat.scale = new SPLAT.Vector3(scale, scale, scale) // Scale the model to 100x its original size
+      splat.applyScale() // Scale the model to 100x its original size
+
   
       // Start animation loop
       const frame = () => {
@@ -175,9 +182,17 @@
         renderer.render(scene, camera)
         animationFrameId = requestAnimationFrame(frame)
         //console.log(camera.position, camera.rotation)
+        emit('frame', {
+          position: camera.position,
+          rotation: camera.rotation
+        })
       }
   
       animationFrameId = requestAnimationFrame(frame)
+            // Set initial camera view if available
+            if (props.cameraViews?.length) {
+       setCameraView(props.cameraViews[0])
+      }
     } catch (error) {
       console.error('Error loading Gaussian Splatting model:', error)
     }

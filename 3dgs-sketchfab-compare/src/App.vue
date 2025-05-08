@@ -2,6 +2,7 @@
 import SketchfabViewer from "./components/SketchfabViewer.vue";
 import GaussianViewer from "./components/GaussianViewer.vue";
 import GoogleForm from "./components/GoogleForm.vue";
+import cameras from './assets/cameras.js';
 import { ref } from "vue";
 
 interface ViewerAPI {
@@ -17,50 +18,9 @@ const gaussianViewerRef = ref<{
   previousView: () => void;
 } | null>(null);
 
-const cameraViews = [
-  {
-    name: "Default View",
-    position: {
-      x: 10.719943604115596,
-      y: -4.908698065119254,
-      z: -19.469864307449498,
-    },
-    rotation: {
-      x: -0.10391765437346483,
-      y: -0.24742050609682814,
-      z: -0.026700636810493374,
-      w: 0.9629492667146181,
-    },
-  },
-  {
-    name: "Lubang",
-    position: {
-      x: 1.1622871244790622,
-      y: 0.36230609770561495,
-      z: -1.677699106052149,
-    },
-    rotation: {
-      x: -0.02669777365207973,
-      y: -0.8476062129711616,
-      z: -0.04284053797554354,
-      w: 0.5282192962403724,
-    },
-  },
-  {
-    name: "Top View",
-    position: {
-      x: 0.35193592419235237,
-      y: 1.0055439035098597,
-      z: -4.628968631530759,
-    },
-    rotation: {
-      x: 0.4191330573740113,
-      y: 0.0059014432098459715,
-      z: -0.002724403241718242,
-      w: 0.9079015534799637,
-    },
-  },
-];
+const cameraState = ref("Camera")
+
+const cameraViews = cameras;
 
 const next = () => {
   gaussianViewerRef?.value?.nextView();
@@ -70,9 +30,18 @@ const previous = () => {
   gaussianViewerRef?.value?.previousView();
   viewerRef?.value?.nextAnnotation();
 };
+
+const dumpCamera = (data)=>{
+  cameraState.value = (data);
+}
+
+defineExpose({
+  cameraState
+})
 </script>
 
 <template>
+
   <div class="app-container">
     <section class="viewer-section">
       <div class="columns">
@@ -90,21 +59,24 @@ const previous = () => {
             class="viewer"
             ref="gaussianViewerRef"
             modelUrl="/gs/gs_50000.compressed.splat"
-            width="939px"
-            height="469px"
+            :width="939"
+            :height="469"
             :cameraViews="cameraViews"
             :controlButtons="false"
             :cameraControls="false"
             :loop="true"
             :focalLength="25.3083684786384"
+            @frame="dumpCamera"
           />
+          <div><code>position: {{ cameraState.position }} </code></div>
+          <div><code>rotation: {{ cameraState.rotation }} </code></div>
+
           <div class="navigation-buttons">
             <button class="button" @click="next">Previous</button>
             <button class="button" @click="previous">Next</button>
           </div>
         </div>
         <div class="column">
-          Google form
           <GoogleForm />
         </div>
       </div>
