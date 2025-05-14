@@ -67,8 +67,9 @@ defineExpose({
 </script>
 
 <template>
+<div class="mt-0 pl-4">
   <div class="columns">
-    <div class="column is-one-fifth">
+    <div class="column">
       <h1 class="title mt-3">Kamera</h1>
       <p>Pilih posisi kamera untuk melihat model dari berbagai sudut.</p>
       <div v-for="(cameraView,idx) in cameraViews">
@@ -82,7 +83,6 @@ defineExpose({
       </div>
     </div>
     <div class="column">
-    
       <SketchfabViewer
         ref="viewerRef"
         modelId="e4a96f7b1b1d42f3b940c88411c1c3f9"
@@ -114,6 +114,7 @@ defineExpose({
 
     </div>
   </div>
+</div>
 </template>
 
 
