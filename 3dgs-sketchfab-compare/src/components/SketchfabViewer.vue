@@ -28,7 +28,6 @@
   </template>
   
   <script setup lang="ts">
-  import { defineProps, defineExpose } from 'vue';
   import { ref, computed, onMounted } from 'vue';
   
   interface SketchfabAPI {

@@ -11,19 +11,15 @@
   </template>
   
   <script setup lang="ts">
-  import { ref, onMounted, onUnmounted , emits} from 'vue'
+  import { ref, onMounted, onUnmounted } from 'vue'
   import * as SPLAT from 'gsplat'
-  
-  interface CameraView {
-    name: string
-    position: { x: number; y: number; z: number }
-    rotation: { x: number; y: number; z: number; w: number }
-  }
+  import { type CameraView } from "../types/cameraview"
+
   
   const props = defineProps<{
     modelUrl: string
-    width?: string
-    height?: string
+    width?: number
+    height?: number
     cameraViews?: CameraView[]
     loop?: boolean
     controlButtons?: boolean,
@@ -39,40 +35,23 @@
   let animationFrameId: number
 
   const emit = defineEmits(['frame'])
-  
-//   const containerStyle = computed(() => ({
-//     width: props.width || '100%',
-//     height: props.height || '400px'
-//   }))
 
   
   const setCameraView = (view: CameraView) => {
     if (!camera) return
   
     // Update camera position using Vector3
-    camera.position = new SPLAT.Vector3(view.position[0], view.position[1], view.position[2])
-  
-    // Set camera rotation directly using quaternion
-    camera.rotation = new SPLAT.Quaternion(
-      view.rotation[0],
-      view.rotation[1],
-      view.rotation[2],
-      view.rotation[3]
-    )
-  
-    // Update controls if they exist
-    // if (controls) {
-    //   // Set a simple target in front of the camera
-    //   // This is a simpler approach that doesn't rely on applyQuaternion
-    //   const target = new SPLAT.Vector3(
-    //     camera.position.x, 
-    //     camera.position.y, 
-    //     camera.position.z - 5 // Just look 5 units ahead on Z axis
-    //   )
-      
-    //   //controls.target = target
-    //   controls.update()
-    // }
+    const position = new SPLAT.Vector3(view.position[0], view.position[1], view.position[2])
+    const rotation = SPLAT.Quaternion.FromEuler(new SPLAT.Vector3(
+      view.euler[0],
+      view.euler[1],
+      view.euler[2]
+    ));
+
+    camera.position = position;
+    camera.rotation = rotation;
+
+    camera.update();  
   }
   
   const nextView = () => {
@@ -132,7 +111,7 @@
     scene = new SPLAT.Scene()
     
     const data = new SPLAT.CameraData()
-    data.setSize(props.width,props.height)
+    data.setSize(props.width || 800, props.height || 600)
     data.far = 1000000;
     camera = new SPLAT.Camera(data)
 
@@ -144,9 +123,9 @@
     
     renderer = new SPLAT.WebGLRenderer()
 
-    console.log('Data:', camera.data)
-    console.log('Renderer:', renderer)
-    console.log('Scene:', scene)
+    //console.log('Data:', camera.data)
+   // console.log('Renderer:', renderer)
+   // console.log('Scene:', scene)
     // Always create orbit controls for smooth transitions, 
     // but disable interaction if cameraControls is false
     controls = new SPLAT.OrbitControls(camera, renderer.canvas)
@@ -165,7 +144,7 @@
     // Add canvas to container
     containerRef.value.appendChild(renderer.canvas)
   
-    renderer.setSize( props.width,props.height)
+    renderer.setSize(props.width || 800, props.height || 600)
     try {
       // Load the splat file
       const splat = await SPLAT.Loader.LoadAsync(props.modelUrl, scene, () => {})
@@ -184,7 +163,7 @@
         //console.log(camera.position, camera.rotation)
         emit('frame', {
           position: camera.position,
-          rotation: camera.rotation
+          rotation: camera.rotation.toEuler()
         })
       }
   
