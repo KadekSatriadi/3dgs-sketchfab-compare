@@ -3,42 +3,41 @@
     "name": "Bird's Eye",
     "position": [70.8080128344308, -61.98541890469137, -150.9849829111015],
     "euler": [-0.3709999999999987, -0.43099999999999994, 0],
-    "description": "Bird's Eye view of the entire scene, showcasing the layout and design."
+    "description": "Perhatikan keseluruhan area Puri Klungkung dan bangunan-bangunan yang berada di dalam kompleks tersebut."
   },
   {
     "name": "Taman Samping",
     "position": [-29.35352735529236, -2.9560797059653523, -16.341778554494724],
     "euler": [-0.22700000000000053, 1.2249999999999996, 4.094395240348137e-17],
-    "description": "A view from the side garden, highlighting the landscaping and outdoor features."
+    "description": "Perhatikan detail pepohonan yang rimbun, seperti kanopi pohon, dedaunan, dan batang."
   },
   {
     "name": "Ukiran Kori",
     "position": [2.0951486803963437, 3.180448911504552, -22.967928843870133],
     "euler":[0.6069999999999991, -0.02599999999999969, 0],
-    "description": "A close-up view of the intricate carvings on the wall, showcasing the craftsmanship."
+    "description": "Perhatikan bentuk relief/ukiran batu."
   },
   {
     "name": "Teras",
     "position": [16.365535624111313, 0.5624755696757866, -8.223124075524572],
     "euler": [2.909388985196312, -1.4209999134041003, -3.141592653589793],
-    "description": "A view from the terrace, providing a perspective of the outdoor seating area."
+    "description": "Perhatikan bagian lantai di bagian tengah."
 },
   {
     "name": "Sekepat",
     "position": [26.59366316134664, -2.999707001964386, 25.076704750580994],
     "euler":[2.864388980384692, -0.5599999999999912, 3.141592653589793],
-    "description": "A view from the Sekepat area, showcasing the surrounding landscape and architecture."
+    "description": "Perhatikan bentuk saung yang berada di tengah."
   },
   {
     "name": "Taman",
     "position": [14.448812652825676, 0.20264949268009502, -19.366620069902783],
     "euler": [-0.20899999999999985, -0.05118530717957389, 0],
-    "description": "A view of the garden area, highlighting the plants and outdoor features."
+    "description": "Perhatikan bentuk pepohonan."
   },
   {
     "name": "Taman Atas",
     "position": [17.282322492364123, -35.56921607142611, -4.483862610858713],
     "euler": [1.6277963267948912, -0.7054073464102155, -3.141592653589793],
-    "description": "A view from the upper garden, providing a perspective of the outdoor seating area."
-  }
+    "description": "erhatikan aneka material yang berbeda, seperti genteng, rumput, batu, maupun aspal."
 ]
