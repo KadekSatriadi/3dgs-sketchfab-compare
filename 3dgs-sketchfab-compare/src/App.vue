@@ -127,6 +127,13 @@ const enableNextCameraButton = async (idx: number): Promise<void> => {
 
   });
 };
+const unlockcameras = ()=>{
+  cameraViews.value.forEach((element:any) => {
+    element.visited = true;
+    element.isloaded = true;
+  });
+  questionnaireReady.value = true;
+}
 const setCamera = (cameraView: CameraView) => {
   
   currentCameraView.value = cameraView;
@@ -167,6 +174,7 @@ const dumpCamera = (data: any) => {
 defineExpose({
   cameraState,
   setCamera,
+  unlockcameras
 });
 </script>
 
@@ -175,7 +183,7 @@ defineExpose({
   <InfoModal />
 
   <div class="columns">
-    <div class="column">
+    <div class="column is-one-fifths">
       <h1 class="title mt-3">Kamera</h1>
       <p>Pilih posisi kamera untuk melihat model dari berbagai sudut.</p>
       <div v-for="(cameraView,idx) in cameraViews">
@@ -200,6 +208,8 @@ defineExpose({
  <b>Klik dan tahan 3D model kemudian gerakkan mouse untuk melihat bentuk 3D dengan lebih detail. </b>
   </div>
 </article>
+ <button v-if="!questionnaireReady" class="button is-small" title="Buka kunci semua kamera. Hanya gunakan jika halaman dengan tidak sengaja ter-refresh" @click="unlockcameras">Unlock</button>
+
       </div>
     </div>
     <div class="column">
@@ -208,7 +218,7 @@ defineExpose({
         modelId="e4a96f7b1b1d42f3b940c88411c1c3f9"
         :show-list="false"
         :loop="true"
-        width="939px"
+        width="839px"
         height="469px"
         title="My 3D Model"
       />
@@ -216,7 +226,7 @@ defineExpose({
         class="viewer"
         ref="gaussianViewerRef"
         modelUrl="/gs/gs_50000.compressed.splat"
-        :width="939"
+        :width="839"
         :height="469"
         :cameraViews="cameraViews"
         :controlButtons="false"
@@ -226,7 +236,7 @@ defineExpose({
         @frame="dumpCamera"
       />
     </div>
-    <div class="column">
+    <div class="column is-two-fifths">
       <h1 class="title mt-3">Kuisioner</h1>
       <div v-if="questionnaireReady">
         <p>Silakan isi kuisioner untuk memberikan umpan balik tentang model 3D ini.</p>
@@ -235,7 +245,7 @@ defineExpose({
       <div v-else>
         <p>Silakan lihat semua kamera untuk membuka kuisioner.</p>
       </div>
-      <footer><small>Halaman website ini adalah instrument penelitian. Tidak untuk disebarluaskan.</small></footer>
+      <footer><small>Punya pertanyaan? Silakan kontak Fadilah: <a href="http://wa.me/6282119479539" target="_blank">http://wa.me/6282119479539</a>. <br/> Halaman website ini adalah instrument penelitian. Tidak untuk disebarluaskan.</small></footer>
 
     </div>
   </div>
